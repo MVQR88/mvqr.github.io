@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to Sheets</title>
+       <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<style>
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #reader {
+        width: 500px;
+    }
+    #result {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+</style>
+
+<main>
+    <div id="reader"></div>
+    <div id="result"></div>
+</main>
+
+<body>
+        <!-- <div class="flex items-center h-screen w-full bg-orange-100"> -->
+      <!-- <div class="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto"> -->
+        <h1 class="block w-full text-center text-grey-darkest mb-6"><b>MVTH MARKETING ORDER RECORD</b></h1>
+
+        <form class="mb-4 flex flex-wrap justify-between" id="form">
+  
+       
+          <div class="flex flex-col w-full mb-4">
+            <label class="field-label" for="email">Name</label>
+            <input class="bg-green-100 px-2 py-1 outline-none" type="text" name="Name" id="email" value="Steve" readonly>
+          </div>
+          <div class="flex flex-col w-full mb-4">
+            <label class="field-label" for="password">Tracking Number</label>
+            <input class="bg-green-100 px-2 py-1 outline-none" type="text" autocomplete="off" name="Tracking Number" id="tnum" readonly>
+          </div>
+
+
+          
+          <button class="bg-sky-500 px-3 py-1 text-white mx-auto" type="submit" id="submit">Submit</button>
+        </form>
+    <!-- </div> -->
+  <!-- </div> -->
+
+</body>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js" integrity="sha512-k/KAe4Yff9EUdYI5/IAHlwUswqeipP+Cp5qnrsUjTPCgl51La2/JhyyjNciztD7mWNKLSXci48m7cctATKfLlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    const scanner = new Html5QrcodeScanner('reader', { 
+        // Scanner will be initialized in DOM inside element with id of 'reader'
+        aspectRatio: 1.0,
+	    qrbox: {
+            width: 400,
+            height: 400,
+        },  // Sets dimensions of scanning box (set relative to reader element width)
+        fps: 20, // Frames per second to attempt a scan
+    });
+
+
+    scanner.render(success, error);
+    // Starts scanner
+	
+    function success(result) {
+	
+	var audio = new Audio('beep.mp3');
+	audio.play();
+	scanner.clear();
+        document.getElementById('tnum').value = `${result}`
+	document.getElementById('submit').click();
+        <!-- <h2>Success!</h2> -->
+        <!-- <p><a href="${result}">${result}</a></p> -->
+        <!-- `; -->
+        <!-- // Prints result as a link inside result element -->
+
+        // scanner.clear();
+        // Clears scanning instance
+
+        // document.getElementById('reader').remove();
+        // Removes reader element from DOM since no longer needed
+    
+    }
+
+    function error(err) {
+        console.error(err);
+        // Prints any errors to the console
+    }
+
+</script>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwpUluoOrT577SXc9_n2kDQYc7QXDQpBcEQFHXFZmDRFhTWEc8wEcvssNc1j3R5VDfhwQ/exec'
+    const form = document.querySelector('#form')
+    const btn = document.querySelector('#submit')
+
+
+    form.addEventListener('submit', e => {
+      e.preventDefault()
+      btn.disabled = true
+	// document.getElementById('tnum').blur();
+      btn.innerHTML = "Loading..."
+
+      console.log(form)
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => { 
+              btn.disabled = false
+      btn.innerHTML = "Submit"
+	document.getElementById('tnum').value = ''
+		scanner.render(success, error);
+            /*alert('Success!', response)*/ })
+        .catch(error => {
+                     btn.disabled = false
+      btn.innerHTML = "Submit"
+            alert('Error!', error.message)})
+    })
+</script>
+</html>
